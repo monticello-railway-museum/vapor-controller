@@ -125,8 +125,8 @@ static void set_display(char *str1, char *str2)
 }
 
 #define Kp 0.01
-#define Ki 0.002
-#define Kd 0.1
+#define Ki 0.0005
+#define Kd 0.01
 
 #define LOW 0.40
 #define HIGH 1.00
