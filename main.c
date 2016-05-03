@@ -209,7 +209,7 @@ float pid(float setPress, float press, float maxPress, int reset)
            (int)(valveCloseTime + 0.5));
 
     if (valveCloseTime > ticksToMax)
-        adj = 0;
+        adj -= 2 / VALVE_SPEED / 10;
 
     lastDiff = diff;
 
@@ -221,6 +221,11 @@ int main (void)
     uart_init();
     stdout = &mystdout;
     printf("hi world!\n");
+
+    DDRB |= _BV(DDB2);
+
+    TCCR1A = _BV(COM1B1) | _BV(WGM10) | _BV(WGM11);
+    TCCR1B = _BV(WGM12) | _BV(CS10);
 
     /* set pin 5 of PORTB for output*/
     DDRB |= _BV(DDB5);
@@ -353,6 +358,11 @@ int main (void)
             snprintf(fbuf, sizeof(fbuf), "%+9d", (int)(adj * 100));
             memcpy(buf2 + 7, fbuf, 9);
         }
+
+        if (adj >= 1)
+            OCR1B = 1023;
+        else
+            OCR1B = adj * 1024;
 
         if (adj > actValvePos) {
             actValvePos += 1 / VALVE_SPEED / 10;
